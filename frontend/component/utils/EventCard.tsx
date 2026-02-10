@@ -15,15 +15,8 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ event }) => {
-  const backendUrl = '';
-
   // Determine correct image URL for event
-  const imageUrl =
-    event.image &&
-    typeof event.image === 'string' &&
-    event.image.startsWith('/media')
-      ? `${backendUrl}${event.image}`
-      : event.image || '/images/default-event.jpg';
+  const imageUrl = event.image || '/main_logo.png';
 
   // State for current user's first name (to check ownership)
   const [userName, setUserName] = useState<string>('');
@@ -150,7 +143,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
         {/* Event image */}
         <div className='relative w-full h-56'>
           <Image
-            src={event.image.startsWith('http') ? event.image.replace('http://3.106.141.19', '') : event.image}
+            src={imageUrl}
             alt={event.title}
             fill
             className='object-cover'

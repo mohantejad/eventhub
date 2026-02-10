@@ -2,6 +2,7 @@ from django.db.models import Q
 import django_filters
 from rest_framework import viewsets, filters, status
 from rest_framework.permissions import IsAuthenticated, AllowAny, BasePermission
+from datetime import date, datetime, timedelta
 
 from django.core.mail import send_mail
 from .models import Event, EventBooking
@@ -21,11 +22,12 @@ class EventFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method="filter_by_keyword")
     event_category = django_filters.CharFilter(
         field_name="event_category", lookup_expr="iexact")
+    event_mode = django_filters.CharFilter(field_name="event_mode", lookup_expr="iexact")
     date = django_filters.CharFilter(method="filter_by_date")
 
     class Meta:
         model = Event
-        fields = ["city", "event_category"]
+        fields = ["city", "event_category", "event_mode"]
 
     def filter_by_keyword(self, queryset, name, value):
         return queryset.filter(
@@ -33,15 +35,23 @@ class EventFilter(django_filters.FilterSet):
         )
 
     def filter_by_date(self, queryset, name, value):
-        from datetime import date, timedelta
-
         today = date.today()
-        if value.lower() == "today":
-            return queryset.filter(date=today)
-        elif value.lower() == "tomorrow":
-            return queryset.filter(date=today + timedelta(days=1))
-        elif value.lower() == "this_weekend":
-            return queryset.filter(date__week_day__in=[6, 7])
+        normalized = value.lower()
+
+        if normalized == "today":
+            return queryset.filter(date__date=today)
+        elif normalized == "tomorrow":
+            return queryset.filter(date__date=today + timedelta(days=1))
+        elif normalized == "this_weekend":
+            return queryset.filter(date__week_day__in=[1, 7])
+
+        # Also support ISO date query values from the frontend (YYYY-MM-DD)
+        try:
+            parsed_date = datetime.strptime(value, "%Y-%m-%d").date()
+            return queryset.filter(date__date=parsed_date)
+        except ValueError:
+            pass
+
         return queryset
 
 
@@ -96,27 +106,32 @@ class EventViewSet(viewsets.ModelViewSet):
 class EventBookingViewSet(viewsets.ModelViewSet):
     queryset = EventBooking.objects.all()
     serializer_class = EventBookingSerializer
+    permission_classes = [AllowAny]
+    http_method_names = ['post']
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
-
             booking = serializer.save()
             event = booking.event
             event.number_of_bookings += int(booking.quantity)
             event.save()
+            total_price = booking.quantity * booking.event.price
 
-            send_mail(
-                subject="🎟️ Ticket Confirmation - Your Event Booking",
-                message=f'Thank you {serializer.data['name']} for booking {serializer.data['quantity']} ticket(s) to our event!\n\n'
-                f'Event ID: {serializer.data['event']}\n'
-                f'Quantity: {serializer.data['quantity']}\n'
-                f'Total: $ {int(serializer.data['quantity']) * int(event.price)}\n\n'
-                f'We look forward to seeing you there!',
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[serializer.data['email']],
-            )
+            if settings.SEND_BOOKING_EMAILS:
+                send_mail(
+                    subject="🎟️ Ticket Confirmation - Your Event Booking",
+                    message=(
+                        f"Thank you {booking.name} for booking {booking.quantity} ticket(s) to our event!\n\n"
+                        f"Event ID: {booking.event_id}\n"
+                        f"Quantity: {booking.quantity}\n"
+                        f"Total: ${total_price}\n\n"
+                        "We look forward to seeing you there!"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[booking.email],
+                )
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

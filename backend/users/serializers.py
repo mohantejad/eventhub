@@ -15,7 +15,7 @@ class UserCreateSerializer(DjoserUserCreateSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'  # Expose all fields (consider restricting for security)
+        fields = ('id', 'first_name', 'last_name', 'email', 'profile_picture')
 
 # Serializer for current authenticated user, with limited fields
 class CurrentUserSerializer(serializers.ModelSerializer):

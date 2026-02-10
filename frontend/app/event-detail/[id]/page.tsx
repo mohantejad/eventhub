@@ -46,7 +46,7 @@ const EventDetail = () => {
         {/* Event image */}
         <div className='w-full'>
           <Image
-            src={event.image.startsWith('http') ? event.image.replace('http://3.106.141.19', '') : event.image}
+            src={event.image || '/main_logo.png'}
             alt={event.title}
             width={600}
             height={400}

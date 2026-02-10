@@ -57,27 +57,7 @@ const AllEventsContent = () => {
         if (selectedMode)
           apiUrl += `event_mode=${encodeURIComponent(selectedMode)}&`;
 
-        // Handle date filter logic
-        if (selectedDate) {
-          const today = new Date();
-          let targetDate = '';
-
-          if (selectedDate === 'today') {
-            targetDate = today.toISOString().split('T')[0];
-          } else if (selectedDate === 'tomorrow') {
-            const tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 1);
-            targetDate = tomorrow.toISOString().split('T')[0];
-          } else if (selectedDate === 'this_weekend') {
-            const day = today.getDay();
-            const daysUntilSaturday = (6 - day + 7) % 7;
-            const saturday = new Date(today);
-            saturday.setDate(today.getDate() + daysUntilSaturday);
-            targetDate = saturday.toISOString().split('T')[0];
-          }
-
-          if (targetDate) apiUrl += `date=${encodeURIComponent(targetDate)}&`;
-        }
+        if (selectedDate) apiUrl += `date=${encodeURIComponent(selectedDate)}&`;
 
         // Set headers for authentication if token is present
         const headers: Record<string, string> = {};

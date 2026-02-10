@@ -16,7 +16,7 @@
 {% blocktrans %}You are receiving this email because you registered for an EventHub account and need to complete your activation process.{% endblocktrans %}
 
 {% trans "Please click the link below to activate your EventHub account:" %}
-http://localhost:3000/{{ url|safe }}
+{{ protocol }}://{{ domain }}/{{ url|safe }}
 
 {% trans "Thank you for choosing EventHub!" %}
 
@@ -31,10 +31,9 @@ http://localhost:3000/{{ url|safe }}
 <p>{% blocktrans %}You are receiving this email because you registered for an EventHub account and need to complete your activation process.{% endblocktrans %}</p>
 
 <p>{% trans "Please click the link below to activate your EventHub account:" %}</p>
-<p><a href="http://localhost:3000/{{ url|safe }}">Activate your EventHub account</a></p>
+<p><a href="{{ protocol }}://{{ domain }}/{{ url|safe }}">Activate your EventHub account</a></p>
 
 <p>{% trans "Thank you for choosing EventHub!" %}</p>
 
 <p>{% blocktrans %}The EventHub Team{% endblocktrans %}</p>
 {% endblock html_body %}
-

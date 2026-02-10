@@ -9,18 +9,11 @@ class EventSerializer(serializers.ModelSerializer):
     def get_likes(self, obj):
         return obj.liked_by.count()
 
-    # def get_liked(self, obj):
-    #     user = self.context.get('request').user
-    #     if user and user.is_authenticated:
-    #         return obj.liked_by.filter(id=user.id).exists()
-    #     return False
     def get_liked(self, obj):
-        user = self.context.get('request').user
-        print(f"[DEBUG] User: {user}, Authenticated: {user.is_authenticated}")
+        request = self.context.get('request')
+        user = getattr(request, 'user', None)
         if user and user.is_authenticated:
-            exists = obj.liked_by.filter(id=user.id).exists()
-            print(f"[DEBUG] User liked event: {exists}")
-            return exists
+            return obj.liked_by.filter(id=user.id).exists()
         return False
 
     class Meta:

@@ -1,11 +1,17 @@
 [[redirects]]
   from = "/api/*"
-  to = "http://3.106.141.19/api/:splat"
+  to = "${NEXT_PUBLIC_BACKEND_URL}/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/auth/*"
+  to = "${NEXT_PUBLIC_BACKEND_URL}/auth/:splat"
   status = 200
   force = true
 
 [[redirects]]
   from = "/media/*"
-  to = "http://3.106.141.19/media/:splat"
+  to = "${NEXT_PUBLIC_BACKEND_URL}/media/:splat"
   status = 200
   force = true

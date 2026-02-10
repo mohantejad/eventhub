@@ -34,7 +34,7 @@ const BookTicketModal = ({
     e.preventDefault();
     const totalAmount = eventPrice * quantity;
     router.push(
-      `/checkout?name=${eventTitle}&email=${email}&quantity=${quantity}&eventId=${eventId}&totalAmount=${totalAmount}`
+      `/checkout?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&quantity=${quantity}&eventId=${eventId}&totalAmount=${totalAmount}&eventTitle=${encodeURIComponent(eventTitle)}`
     );
     onOpenChange(false); // Close the modal after proceeding
   };

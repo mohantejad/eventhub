@@ -13,6 +13,7 @@ const CheckoutClient = () => {
   const email = searchParams.get('email') || '';
   const quantity = searchParams.get('quantity') || '1';
   const eventId = searchParams.get('eventId') || '';
+  const eventTitle = searchParams.get('eventTitle') || '';
   const ticketPrice = searchParams.get('totalAmount') || '';
 
   const [cardNumber, setCardNumber] = useState('');
@@ -62,7 +63,7 @@ const CheckoutClient = () => {
 
     if (response.ok) {
       toast.success('🎉 Tickets booked successfully!');
-      router.push('success-booking');
+      router.push('/success-booking');
     } else {
       toast.error('❌ Something went wrong while booking.');
     }
@@ -72,6 +73,9 @@ const CheckoutClient = () => {
     <div className='max-w-md mx-auto mt-10 p-6 border rounded-md shadow-sm space-y-6'>
       <h2 className='text-2xl font-bold text-center'>Checkout</h2>
       <div className='space-y-1 text-gray-700'>
+        <p><strong>Name:</strong> {name}</p>
+        <p><strong>Email:</strong> {email}</p>
+        {eventTitle ? <p><strong>Event:</strong> {eventTitle}</p> : null}
         <p><strong>Event ID:</strong> {eventId}</p>
         <p><strong>Ticket Number:</strong> {quantity}</p>
         <p><strong>Total Price:</strong> ₹ {ticketPrice}</p>

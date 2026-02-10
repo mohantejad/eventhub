@@ -156,8 +156,8 @@ const CreateEventPage = () => {
               </option>
             ))}
           </select>
-          {errors.city && (
-            <p className='text-red-500 text-sm'>{errors.city.message}</p>
+          {errors.mode && (
+            <p className='text-red-500 text-sm'>{errors.mode.message}</p>
           )}
 
           {/* Category Selection */}
@@ -235,7 +235,7 @@ const CreateEventPage = () => {
             </motion.button>
 
             <Link
-              href='/profile'
+              href='/user-profile'
               className='px-6 py-2 bg-gray-500 text-white rounded-md'
             >
               Cancel
