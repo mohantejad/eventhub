@@ -1,0 +1,8 @@
+{
+    "[javascriptreact]": {
+        "prettier.jsxSingleQuote": true
+    },
+    "[typescriptreact]": {
+        "prettier.singleQuote": true
+    }
+}
